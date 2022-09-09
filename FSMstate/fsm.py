@@ -1,4 +1,5 @@
 import re
+import asyncio
 
 
 class FSMIterator:
@@ -39,7 +40,6 @@ class FSMQuiz:
 		pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
 		return bool(pattern.findall(self.msg))
 
-
 	def get_steps_quiz(self):
 		return [
 			f"1. {self.user_info['first_name']}, оставьте пожалуйста ваш контактный номер телефона:",
@@ -50,7 +50,7 @@ class FSMQuiz:
 			"Спасибо, мы обязательно свяжемся с вами и сообщим всю необходимую информацию.",
 		]
 
-	def set_fsm_quiz(self):
+	async def set_fsm_quiz(self):
 		"""
 		Включение/выключение машины состояния опроса записи на обучающий курс
 		"""
@@ -66,11 +66,11 @@ class FSMQuiz:
 		elif bool(pattern_off.findall(self.msg)) and self.__dict__.get('fsm_quiz', False):
 			self.fsm_quiz = False
 			self.data_quiz_list = []
-			self.send_message(some_text=self.TEXT_OFF, buttons=True)
+			await self.send_message(some_text=self.TEXT_OFF, buttons=True)
 		elif not self.__dict__.get('fsm_quiz', False):
 			self.fsm_quiz = False
 
-	def send_msg_fsm_quiz(self):
+	async def send_msg_fsm_quiz(self):
 		"""
 		Пошаговая отправка сообщений опроса
 		"""
@@ -94,10 +94,10 @@ class FSMQuiz:
 
 		print(text)
 		if self.fsm_quiz:
-			self.send_message(some_text=text, buttons=buttons)
+			await self.send_message(some_text=text, buttons=buttons)
 			self.data_quiz_list.append(self.msg)
 		else:
-			self.send_message(some_text=text, buttons=True)
+			await self.send_message(some_text=text, buttons=True)
 			self.data_quiz_list.append(self.msg)
 			for key, value in zip(self.data_quiz, self.data_quiz_list[1:]):
 				self.data_quiz[key] = value
@@ -105,8 +105,8 @@ class FSMQuiz:
 			print(self.data_quiz_list)
 			print(self.data_quiz)
 
-	def handler_fsm_quiz(self):
-		self.set_fsm_quiz()
+	async def handler_fsm_quiz(self):
+		await self.set_fsm_quiz()
 		if self.fsm_quiz:
-			self.send_msg_fsm_quiz()
+			await self.send_msg_fsm_quiz()
 			return True

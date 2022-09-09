@@ -3,14 +3,13 @@ import requests
 import asyncio
 import string
 
-# from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from .VKsearch import VkSearch
 # from Data_base.DecorDB import db_insert
 import os
 import re
 import random
 # from Selenium_method.main import load_info_client
-# from FSMstate import FSMQuiz
+from FSMstate import FSMQuiz
 from .verify import Verify
 from .key_button import MyKeyButton
 from vkwave.bots import SimpleBotEvent
@@ -18,7 +17,7 @@ from vkwave.bots import SimpleBotEvent
 
 class VkUser(
 			VkSearch,
-			# FSMQuiz,
+			FSMQuiz,
 			Verify,
 			MyKeyButton,
 ):
@@ -39,6 +38,7 @@ class VkUser(
 
 	def __init__(self, event: SimpleBotEvent):
 		super().__init__()
+		FSMQuiz.__init__(self)
 		self.event = event
 		self.user_id = event.user_id
 		text = event.text.split('@')[0] if event.text[0] == '/' else event.text
@@ -59,16 +59,16 @@ class VkUser(
 
 		if buttons == 'send_photo':
 			await self.get_button_send_photo(params)
-		# elif buttons == 'fsm_quiz':
-		# 	self.get_button_fsm_quiz(params)
-		# elif buttons == 'training_buttons':
-		# 	self.get_button_training(params)
-		# elif buttons == 'break':
-		# 	self.get_button_break(params)
-		# elif buttons == 'practic_extention':
-		# 	self.get_practic_extention(params)
-		# elif buttons == 'what_job':
-		# 	self.get_what_job(params)
+		elif buttons == 'fsm_quiz':
+			await self.get_button_fsm_quiz(params)
+		elif buttons == 'training_buttons':
+			await self.get_button_training(params)
+		elif buttons == 'break':
+			await self.get_button_break(params)
+		elif buttons == 'practic_extention':
+			await self.get_practic_extention(params)
+		elif buttons == 'what_job':
+			await self.get_what_job(params)
 		elif buttons == 'entry_link':
 			await self.get_entry_link(params)
 		elif buttons:
@@ -108,8 +108,8 @@ class VkUser(
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
 
 		await self.send_message_to_all_admins()
-		# if self.handler_fsm_quiz():
-		# 	return
+		if await self.handler_fsm_quiz():
+			return
 		if self.verify_hello():
 			await self.send_hello()
 		for verify, func in self.VERIFY_FUNC.items():
@@ -268,4 +268,4 @@ class VkUser(
 			f" и/или записаться вы можете, заполнив анкету предварительной записи," \
 			f" которая вас ни к чему не обязывает."
 
-		await self.send_message(some_text=text)
+		await self.send_message(some_text=text, buttons='training_buttons')
