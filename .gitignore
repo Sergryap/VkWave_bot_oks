@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+venv
+bot_run.bat
+.idea
+.gitignore
+words.txt
+cenz.txt
+password.py
+vk_agent/token.txt
