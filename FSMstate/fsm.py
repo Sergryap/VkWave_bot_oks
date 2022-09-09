@@ -34,8 +34,6 @@ class FSMQuiz:
 		}
 		self.data_quiz_list = []
 
-	TEXT_OFF = 'Спасибо, вы можете продолжить в любое время. Просто отправьте "обучение" или "ed".'
-
 	def verify_phone(self):
 		pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
 		return bool(pattern.findall(self.msg))
@@ -46,8 +44,8 @@ class FSMQuiz:
 			"2. Введите ваше имя",
 			"3. Введите вашу фамилию",
 			"4. Вы уже имеете опыт в наращивании ресниц?",
-			"5. Кем вы сейчас работаете или чем занимаетесь?",
-			"Спасибо, мы обязательно свяжемся с вами и сообщим всю необходимую информацию.",
+			"5. Кем вы сейчас работаете или чем занимаетесь? Выберите ниже или напишите ваш вариант.",
+			f'Спасибо, {self.user_info["first_name"]}, мы обязательно свяжемся с вами и сообщим всю необходимую информацию.',
 		]
 
 	async def set_fsm_quiz(self):
@@ -66,7 +64,8 @@ class FSMQuiz:
 		elif bool(pattern_off.findall(self.msg)) and self.__dict__.get('fsm_quiz', False):
 			self.fsm_quiz = False
 			self.data_quiz_list = []
-			await self.send_message(some_text=self.TEXT_OFF, buttons=True)
+			text_off = f'Спасибо, {self.user_info["first_name"]}, вы можете продолжить в любое время. Просто отправьте "обучение" или "ed".'
+			await self.send_message(some_text=text_off, buttons=True)
 		elif not self.__dict__.get('fsm_quiz', False):
 			self.fsm_quiz = False
 

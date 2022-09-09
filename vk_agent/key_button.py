@@ -5,6 +5,17 @@ from vkwave.bots.utils.keyboards.keyboard import ButtonColor
 
 class MyKeyButton:
 
+	BUTTON_FUNC = {
+		'send_photo': 'get_button_send_photo',
+		'fsm_quiz': 'get_button_fsm_quiz',
+		'training_buttons': 'get_button_training',
+		'break': 'get_button_break',
+		'practic_extention': 'get_practic_extention',
+		'what_job': 'get_what_job',
+		'entry_link': 'get_entry_link',
+	}
+
+
 	@staticmethod
 	async def get_buttons(params: dict):
 
@@ -65,7 +76,13 @@ class MyKeyButton:
 	@staticmethod
 	async def get_what_job(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
-		buttons = ['Пропустить', 'Пропустить', 'Пропустить', 'Пропустить', 'Конец']
+		buttons = [
+			'Работаю в сфере красоты',
+			'Медицинский работник',
+			'Работаю в другой сфере',
+			'Домохозяйка',
+			'Учусь',
+		]
 		btn_color = ButtonColor.SECONDARY
 		for i, btn in enumerate(buttons, start=1):
 			keyboard.add_text_button(btn, btn_color)

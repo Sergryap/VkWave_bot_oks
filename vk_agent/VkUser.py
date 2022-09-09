@@ -57,28 +57,17 @@ class VkUser(
 			"message": some_text,
 			"keyboard": None}
 
-		if buttons == 'send_photo':
-			await self.get_button_send_photo(params)
-		elif buttons == 'fsm_quiz':
-			await self.get_button_fsm_quiz(params)
-		elif buttons == 'training_buttons':
-			await self.get_button_training(params)
-		elif buttons == 'break':
-			await self.get_button_break(params)
-		elif buttons == 'practic_extention':
-			await self.get_practic_extention(params)
-		elif buttons == 'what_job':
-			await self.get_what_job(params)
-		elif buttons == 'entry_link':
-			await self.get_entry_link(params)
-		elif buttons:
-			await self.get_buttons(params)
-
+		for key, func in self.BUTTON_FUNC.items():
+			if buttons == key:
+				await eval(f'self.{func}(params)')
+				break
+			elif buttons:
+				await self.get_buttons(params)
 		try:
 			await self.event.answer(**params)
 		except requests.exceptions.ConnectionError:
 			time.sleep(1)
-			await self.send_message(some_text)
+			await self.send_message(some_text, buttons)
 
 	async def send_message_to_admin(self, user_id, msg_error=None):
 		if msg_error:
