@@ -46,10 +46,13 @@ class FSMQuiz:
 	Класс квиза записи на курс
 	"""
 
+	TEXT_OFF = 'Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"'
+
 	def __init__(self):
 		self.data_quiz = {}
 		self.data_quiz_list = []
 		self.fsm_quiz = False
+		self.verify_quiz = self.verify_fsm_quiz_on
 
 	def get_steps_quiz(self):
 		return [
@@ -103,15 +106,15 @@ class FSMQuiz:
 		Включение/выключение машины состояния опроса записи на обучающий курс
 		"""
 
-		if self.verify_fsm_quiz_on(on_fsm=True):
+		if self.verify_quiz(on_fsm=True):
 			self.fsm_quiz = True
 			self.step_count = 1
 			self.step_text = FSMIterator(steps=self.get_steps_quiz())
 			self.iter_quiz = iter(self.step_text)
-		elif self.verify_fsm_quiz_on(on_fsm=False):
+		elif self.verify_quiz(on_fsm=False):
 			self.fsm_quiz = False
 			self.data_quiz_list = []
-			text_off = f'Спасибо, {self.user_info["first_name"]}. Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed".'
+			text_off = f'Спасибо, {self.user_info["first_name"]}. {self.TEXT_OFF}.'
 			await self.send_message(some_text=text_off, buttons=True)
 
 	async def send_step_msg(self, buttons, verify=False):
