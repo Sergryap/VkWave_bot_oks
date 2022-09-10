@@ -10,5 +10,4 @@ client_router = DefaultRouter()
 
 @simple_bot_message_handler(client_router)
 async def basic_send(event: SimpleBotEvent):
-	# await event.answer("got hello")
 	await global_handler(event)

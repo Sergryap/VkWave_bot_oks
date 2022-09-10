@@ -70,3 +70,15 @@ class Verify:
 	def verify_training(self):
 		pattern = re.compile(r'\b(?:обучен|обучить?ся|выучить?ся|научить?ся|курс)\w*')
 		return bool(pattern.findall(self.msg) or self.msg == 'ed')
+
+	def verify_fsm_quiz_on(self, on_fsm=True):
+		pattern_on = re.compile(r'\b(?:анкета|заполнить анкету)\w*')
+		pattern_off = re.compile(r'\b(?:отмена|отменить|стоп|stop)\w*')
+		if on_fsm:
+			return bool(pattern_on.findall(self.msg) and not self.fsm_quiz)
+		else:
+			return bool(pattern_off.findall(self.msg) and self.fsm_quiz)
+
+	def verify_phone(self):
+		pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
+		return bool(pattern.findall(self.msg))

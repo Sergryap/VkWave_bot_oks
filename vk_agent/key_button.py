@@ -1,4 +1,3 @@
-# from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vkwave.bots.utils.keyboards.keyboard import Keyboard
 from vkwave.bots.utils.keyboards.keyboard import ButtonColor
 
@@ -13,19 +12,19 @@ class MyKeyButton:
 		'practic_extention': 'get_practic_extention',
 		'what_job': 'get_what_job',
 		'entry_link': 'get_entry_link',
+		'pass': 'get_button_pass',
 	}
-
 
 	@staticmethod
 	async def get_buttons(params: dict):
 
 		keyboard = Keyboard(one_time=False, inline=False)
-		buttons = ['Записаться', 'Start', 'Адрес', 'Примеры работ']
+		buttons = ['Записаться', 'Start', 'Обучение', 'Примеры работ']
 		buttons_color = [
 			ButtonColor.PRIMARY,
-			ButtonColor.POSITIVE,
+			ButtonColor.PRIMARY,
 			ButtonColor.SECONDARY,
-			ButtonColor.POSITIVE
+			ButtonColor.SECONDARY
 		]
 		for btn, btn_color in zip(buttons[:2], buttons_color[:2]):
 			keyboard.add_text_button(btn, btn_color)
@@ -60,8 +59,17 @@ class MyKeyButton:
 	@staticmethod
 	async def get_button_break(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
+		buttons = ['Отменить', 'Пропустить']
+		btn_color = ButtonColor.PRIMARY
+		for btn in buttons:
+			keyboard.add_text_button(btn, btn_color)
+		params['keyboard'] = keyboard.get_keyboard()
+
+	@staticmethod
+	async def get_button_pass(params: dict):
+		keyboard = Keyboard(one_time=False, inline=True)
 		buttons_color = ButtonColor.PRIMARY
-		keyboard.add_text_button('Отменить', buttons_color)
+		keyboard.add_text_button('Пропустить', buttons_color)
 		params['keyboard'] = keyboard.get_keyboard()
 
 	@staticmethod
