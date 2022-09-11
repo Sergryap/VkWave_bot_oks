@@ -1,1 +1,1 @@
-from FSMstate.fsm import FSMQuiz
+from FSMstate.fsm_quiz_training import FSMQuizTraining

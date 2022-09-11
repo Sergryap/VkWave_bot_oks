@@ -9,7 +9,7 @@ import os
 import re
 import random
 # from Selenium_method.main import load_info_client
-from FSMstate import FSMQuiz
+from FSMstate import FSMQuizTraining
 from .verify import Verify
 from .key_button import MyKeyButton
 from vkwave.bots import SimpleBotEvent
@@ -17,7 +17,7 @@ from vkwave.bots import SimpleBotEvent
 
 class VkUser(
 			VkSearch,
-			FSMQuiz,
+			FSMQuizTraining,
 			Verify,
 			MyKeyButton,
 ):
@@ -27,9 +27,8 @@ class VkUser(
 
 	COMMAND = f"""
 	✔️ Помочь записатьcя - "z"
-	✔️ Напомнить время последней записи - "r"
 	✔️️ Сориентировать по ценам - "p"
-	✔️️ Помочь найти нас - "h"
+	✔️️ Наш адрес - "h"
 	✔️️ Показать наши работы - "ex"
 	✔️️ Связаться с администрацией - "ad"
 	✔️️ Про наши курсы - "ed"
@@ -38,7 +37,6 @@ class VkUser(
 
 	def __init__(self, event: SimpleBotEvent):
 		super().__init__()
-		FSMQuiz.__init__(self)
 		self.event = event
 		self.user_id = event.user_id
 		text = event.text.split('@')[0] if event.text[0] == '/' else event.text
@@ -97,7 +95,7 @@ class VkUser(
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
 
 		await self.send_message_to_all_admins()
-		if await self.handler_fsm_quiz():
+		if await self.handler_fsm_quiz_training():
 			return
 		if self.verify_hello():
 			await self.send_hello()
@@ -123,9 +121,9 @@ class VkUser(
 				return "Добрый вечер"
 
 		d = [
-			'\nНапишите, что бы вы хотели или выберите ниже.',
-			'\nНапишите мне, что вас интересует или выберите ниже.',
-			'\nЧто вас интересует? Напишите пожалуйста или выберите ниже.'
+			'\nНапишите, что бы вы хотели или выберите.',
+			'\nНапишите мне, что вас интересует или выберите.',
+			'\nЧто вас интересует? Напишите пожалуйста или выберите.'
 		]
 
 		t = f"""
@@ -133,24 +131,30 @@ class VkUser(
 		{self.COMMAND}
 		"""
 
-		delta = random.choice(d) if self.verify_only_hello() else ''
-		t1 = f"{good_time()}, {self.user_info['first_name']}!\nЯ бот Oksa-studio.\nБуду рад нашему общению.\n{t}{delta}"
-		t2 = f"{good_time()}, {self.user_info['first_name']}!\nЯ чат-бот Oksa-studio.\nОчень рад видеть Вас у нас.\n{t}{delta}"
-		t3 = f"{good_time()}, {self.user_info['first_name']}!\nЯ бот этого чата.\nРад видеть Вас у нас в гостях.\n{t}{delta}"
+		delta = random.choice(d)
+		t1 = f"{good_time()}, {self.user_info['first_name']}!\nЯ бот Oksa-studio.\nБуду рад нашему общению.\n"
+		t2 = f"{good_time()}, {self.user_info['first_name']}!\nЯ чат-бот Oksa-studio.\nОчень рад видеть Вас у нас.\n"
+		t3 = f"{good_time()}, {self.user_info['first_name']}!\nЯ бот этого чата.\nРад видеть Вас у нас в гостях.\n"
 		text = random.choice([t1, t2, t3])
-		await self.send_message(some_text=text)
+
+		if self.verify_only_hello():
+			await self.send_message(some_text=text)
+			await self.send_message(some_text=f'{delta}', buttons='start')
+		else:
+			await self.send_message(some_text=text)
+
 
 	async def send_link_entry(self):
-		text = f"""
+		text1 = f"""
 		{self.user_info['first_name']}, узнать о свободных местах, своих записях и/или записаться можно:\n
 		✔️ Самостоятельно: https://dikidi.net/72910
 		✔️ По тел. +7(919)442-35-36
 		✔️ Через личные сообщения: @id9681859 (Оксана)
 		✔ Дождаться сообщения от нашего менеджера\n
-		Что вас еще интересует напишите или выберите ниже:
-		{self.COMMAND}
 		"""
-		await self.send_message(some_text=text, buttons='entry_link')
+		text2 = "Что вас еще интересует напишите или выберите ниже:"
+		await self.send_message(some_text=text1, buttons='entry_link')
+		await self.send_message(some_text=text2, buttons='start')
 
 	async def send_last_service_entry(self):
 		if self.msg == "r":
@@ -188,11 +192,11 @@ class VkUser(
 	async def send_price(self):
 		text = f"""
 		{self.user_info['first_name']}, цены на наши услуги можно посмотреть здесь:
-		✔️https://vk.com/uslugi-142029999\n
-		Что вас еще интересует напишите или выберите ниже:
-		{self.COMMAND}
+		✔️ vk.com/uslugi-142029999\n
 		"""
+		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text)
+		await self.send_message(some_text=text2, buttons='start')
 
 	async def send_contact_admin(self):
 		text = f"""
@@ -202,19 +206,19 @@ class VkUser(
 		✔ https://vk.com/id9681859
 		✔ Email: oksarap@mail.ru
 		✔ Тел.: +7(919)442-35-36\n
-		Что вас еще интересует напишите или выберите ниже:
-		{self.COMMAND}	
 		"""
+		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text)
+		await self.send_message(some_text=text2, buttons='start')
 
 	async def send_site(self):
 		text = f"""
 		{self.user_info['first_name']}, много полезной информации о наращивании ресниц смотрите на нашем сайте:
-		https://oksa-studio.ru/
-		\nЧто вас еще интересует напишите или выберите ниже.\n
-		{self.COMMAND}
+		https://oksa-studio.ru/\n
 		"""
+		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text)
+		await self.send_message(some_text=text2, buttons='start')
 
 	async def send_address(self):
 		text1 = f"""
@@ -225,11 +229,10 @@ class VkUser(
 		Это малоэтажное кирпичное здание слева от ТЦ "Агат" 
 		Вход через "Идеал-Лик", большой стеклянный тамбур\n
 		Что вас еще интересует напишите или выберите ниже.\n
-		{self.COMMAND}	
 		"""
 		await self.send_message(some_text=text1)
 		await self.send_photo('photo-195118308_457239030,photo-142029999_457243624')
-		await self.send_message(some_text=text2)
+		await self.send_message(some_text=text2, buttons='start')
 
 	async def send_bay_bay(self):
 		text1 = f"До свидания, {self.user_info['first_name']}. Будем рады видеть вас снова!"
@@ -256,5 +259,7 @@ class VkUser(
 			f"{self.user_info['first_name']}, получить подробную информацию о предстоящих курсах" \
 			f" и/или записаться вы можете, заполнив анкету предварительной записи," \
 			f" которая вас ни к чему не обязывает."
+		text2 = "Либо выберите ниже:"
 
 		await self.send_message(some_text=text, buttons='training_buttons')
+		await self.send_message(some_text=text2, buttons='start')

@@ -13,6 +13,7 @@ class MyKeyButton:
 		'what_job': 'get_what_job',
 		'entry_link': 'get_entry_link',
 		'pass': 'get_button_pass',
+		'start': 'get_start',
 	}
 
 	@staticmethod
@@ -90,6 +91,24 @@ class MyKeyButton:
 			'Работаю в другой сфере',
 			'Домохозяйка',
 			'Учусь',
+		]
+		btn_color = ButtonColor.SECONDARY
+		for i, btn in enumerate(buttons, start=1):
+			keyboard.add_text_button(btn, btn_color)
+			if i != len(buttons):
+				keyboard.add_row()
+		params['keyboard'] = keyboard.get_keyboard()
+
+	@staticmethod
+	async def get_start(params: dict):
+		keyboard = Keyboard(one_time=False, inline=True)
+		buttons = [
+			'Записатьcя - "z"',
+			'Price - "p"',
+			'Наш адрес - "h"',
+			'Наши работы - "ex"',
+			'Администрация - "ad"',
+			'Наши курсы - "ed"',
 		]
 		btn_color = ButtonColor.SECONDARY
 		for i, btn in enumerate(buttons, start=1):
