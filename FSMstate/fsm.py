@@ -76,8 +76,10 @@ class FSMQuiz:
 			data_quiz = [i[-2] for i in self.get_steps_quiz()[:-1]]
 			self.data_quiz = dict(zip(data_quiz, self.data_quiz_list[1:]))
 			self.data_quiz_list.clear()
-			print(self.data_quiz)
-			print(self.data_quiz_list)
+			text = 'Заявка на обуение:\n'
+			for key, value in self.data_quiz.items():
+				text += f'{key}: {value}\n'
+			await self.send_message_to_all_admins(text=text)
 
 	async def handler_fsm_quiz_training(self):
 		await self.set_fsm_quiz()

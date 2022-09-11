@@ -6,7 +6,6 @@ from password import TOKEN, GROUP_ID
 
 bot = SimpleLongPollBot(tokens=TOKEN, group_id=GROUP_ID)
 # bot.middleware_manager.add_middleware(MatFilterMiddleware())
-
 bot.dispatcher.add_router(client_router)
 
 bot.run_forever()

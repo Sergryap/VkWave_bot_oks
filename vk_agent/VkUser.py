@@ -43,8 +43,8 @@ class VkUser(
 		self.msg = text.lower().translate(str.maketrans('', '', string.punctuation))
 		self.msg_previous = self.msg
 		self.user_info = self.get_info_users()
-		# self.users_id = [7352307, 448564047, 9681859]  # id администраторов сообщества Vk
-		self.users_id = [7352307]  # id администраторов сообщества Vk
+		# self.user_ids = '7352307,448564047,9681859'  # id администраторов сообщества Vk
+		self.user_ids = '7352307'  # id администраторов сообщества Vk
 
 	async def send_message(self, some_text, buttons=True):
 		"""
@@ -66,29 +66,6 @@ class VkUser(
 		except requests.exceptions.ConnectionError:
 			time.sleep(1)
 			await self.send_message(some_text, buttons)
-
-	async def send_message_to_admin(self, user_id, msg_error=None):
-		if msg_error:
-			text = f"Ошибка в работе бота oksa_studio: {msg_error}"
-		else:
-			text = f"""
-			Сообщение от пользователя https://vk.com/id{self.user_id} в чате https://vk.com/gim142029999
-			"{self.msg}"
-			"""
-
-		params = {
-			"user_id": user_id,
-			"message": text,
-			"random_id": 0}
-		try:
-			await self.event.answer(params["message"])
-		except requests.exceptions.ConnectionError:
-			time.sleep(1)
-			await self.send_message_to_admin(user_id)
-
-	async def send_message_to_all_admins(self, msg_error=None):
-		for user_id in self.users_id:
-			await self.send_message_to_admin(user_id, msg_error=msg_error)
 
 	#@db_insert(table='Message')
 	async def handler_msg(self):
@@ -142,7 +119,6 @@ class VkUser(
 			await self.send_message(some_text=f'{delta}', buttons='start')
 		else:
 			await self.send_message(some_text=text)
-
 
 	async def send_link_entry(self):
 		text1 = f"""

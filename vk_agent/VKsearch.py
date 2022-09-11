@@ -9,6 +9,7 @@ import random
 # from Data_base.DecorDB import DBConnect
 from pprint import pprint
 from .photos import photos
+from password import TOKEN
 
 
 class VkSearch: #  (DBConnect):
@@ -118,9 +119,28 @@ class VkSearch: #  (DBConnect):
             all_photos += self.__photos_get('-142029999', album)
         return all_photos
 
+
     @staticmethod
     def get_photos_example():
         attachment = ''
         for photo in random.sample(photos, 5):
             attachment += f"{photo},"
         return attachment[:-1]
+
+    async def send_message_to_all_admins(self, msg_error=None, text=False):
+
+        if msg_error:
+            text = f"Ошибка в работе бота oksa_studio: {msg_error}"
+        elif not text:
+            text = f"""
+            Сообщение от пользователя https://vk.com/id{self.user_id} в чате https://vk.com/gim142029999 "{self.msg}"
+            """
+        params = {
+            "user_ids": self.user_ids,
+            "message": text,
+            "random_id": 0,
+            'access_token': TOKEN, 'v': '5.131'
+        }
+        method_url = self.url + 'messages.send'
+        requests.get(method_url, params=params)
+
