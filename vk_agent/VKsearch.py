@@ -119,7 +119,6 @@ class VkSearch: #  (DBConnect):
             all_photos += self.__photos_get('-142029999', album)
         return all_photos
 
-
     @staticmethod
     def get_photos_example():
         attachment = ''
@@ -128,6 +127,9 @@ class VkSearch: #  (DBConnect):
         return attachment[:-1]
 
     async def send_message_to_all_admins(self, msg_error=None, text=False):
+        """
+        Отправка сообщений всем админам из self.user_ids
+        """
 
         if msg_error:
             text = f"Ошибка в работе бота oksa_studio: {msg_error}"

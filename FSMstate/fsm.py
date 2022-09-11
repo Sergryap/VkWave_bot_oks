@@ -9,6 +9,8 @@ class FSMQuiz:
 	"""
 
 	TEXT_OFF = 'Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"'
+	OUT_TEXT_PREFIX = 'Заявка на обуение'
+	SUFFIX = 'test'
 
 	def __init__(self):
 		self.data_quiz = {}
@@ -76,12 +78,12 @@ class FSMQuiz:
 			data_quiz = [i[-2] for i in self.get_steps_quiz()[:-1]]
 			self.data_quiz = dict(zip(data_quiz, self.data_quiz_list[1:]))
 			self.data_quiz_list.clear()
-			text = 'Заявка на обуение:\n'
+			text = f'{self.OUT_TEXT_PREFIX}:\n'
 			for key, value in self.data_quiz.items():
 				text += f'{key}: {value}\n'
 			await self.send_message_to_all_admins(text=text)
 
-	async def handler_fsm_quiz_training(self):
+	async def handler_fsm_quiz(self):
 		await self.set_fsm_quiz()
 		if self.fsm_quiz:
 			await self.send_msg_fsm_quiz()

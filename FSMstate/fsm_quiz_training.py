@@ -5,7 +5,10 @@ class FSMQuizTraining(FSMQuiz):
 
 	def __init__(self):
 		super().__init__()
-		self.verify_quiz = self.verify_fsm_quiz_on
+		# Для каждого квиза задать свое имя функции, которой присваивается значение
+		self.verify_quiz_training = self.handler_fsm_quiz
+
+	OUT_TEXT_PREFIX = "ЗАЯВКА НА ОБУЧЕНИЕ"
 
 	def get_steps_quiz(self):
 		return [

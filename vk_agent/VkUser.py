@@ -72,7 +72,7 @@ class VkUser(
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
 
 		await self.send_message_to_all_admins()
-		if await self.handler_fsm_quiz_training():
+		if await self.verify_quiz_training():
 			return
 		if self.verify_hello():
 			await self.send_hello()
