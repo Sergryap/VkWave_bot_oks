@@ -10,6 +10,8 @@ from vkwave.bots import (
     ForWhat,
 )
 
+from handlers import global_handler
+
 
 fsm = FiniteStateMachine()
 fsm_training_router = DefaultRouter()
@@ -32,7 +34,8 @@ class FSMTraining:
 )
 async def start_fsm_training(event: BotEvent):
     await fsm.set_state(event=event, state=FSMTraining.phone, for_what=ForWhat.FOR_USER)
-    return await event.answer("1. Укажите, пожалуйста, ваш контактный номер телефона")
+    return await event.answer(global_handler(event))
+    # return await event.answer("1. Укажите, пожалуйста, ваш контактный номер телефона")
 
 
 #  exiting from poll (works on any state)
@@ -45,7 +48,8 @@ async def exit_fsm_training(event: BotEvent):
     # Check if we have the user in database
     if await fsm.get_data(event, for_what=ForWhat.FOR_USER) is not None:
         await fsm.finish(event=event, for_what=ForWhat.FOR_USER)
-    return await event.answer("Спасибо, вы сможете продолжить в любое время")
+    return await event.answer(global_handler(event))
+    # return await event.answer("Спасибо, вы сможете продолжить в любое время")
 
 
 @simple_bot_message_handler(
@@ -59,7 +63,8 @@ async def phone_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"phone": event.object.object.message.text},
     )
-    return await event.answer("2. Введите ваше имя")
+    return await event.answer(global_handler(event))
+    # return await event.answer("2. Введите ваше имя")
 
 
 @simple_bot_message_handler(
@@ -73,7 +78,8 @@ async def name_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"name": event.object.object.message.text},
     )
-    return await event.answer("3. Вы уже имеете опыт в наращивании ресниц?")
+    return await event.answer(global_handler(event))
+    # return await event.answer("3. Вы уже имеете опыт в наращивании ресниц?")
 
 
 @simple_bot_message_handler(
@@ -87,7 +93,8 @@ async def practice_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"practice": event.object.object.message.text},
     )
-    return await event.answer("4. Кем вы сейчас работаете или чем занимаетесь? Выберите ниже или напишите свой вариант.")
+    return await event.answer(global_handler(event))
+    # return await event.answer("4. Кем вы сейчас работаете или чем занимаетесь? Выберите ниже или напишите свой вариант.")
 
 @simple_bot_message_handler(
     fsm_training_router,
@@ -100,7 +107,8 @@ async def practice_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"practice": event.object.object.message.text},
     )
-    return await event.answer("5. Укажите ваш возраст, либо пропустите данный пункт.")
+    return await event.answer(global_handler(event))
+    # return await event.answer("5. Укажите ваш возраст, либо пропустите данный пункт.")
 
 @simple_bot_message_handler(
     fsm_training_router,
@@ -108,7 +116,8 @@ async def practice_fsm_training(event: BotEvent):
 )
 async def age_fsm_training(event: BotEvent):
     if not event.object.object.message.text.isdigit():
-        return f"Укажите правильное значение, либо пропустите данный пункт, или отмените!"
+        return await event.answer(global_handler(event))
+        # return f"Укажите правильное значение, либо пропустите данный пункт, или отмените!"
     await fsm.add_data(
         event=event,
         for_what=ForWhat.FOR_USER,
