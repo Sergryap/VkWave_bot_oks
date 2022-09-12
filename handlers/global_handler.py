@@ -22,7 +22,7 @@ async def users_update(user_id, user_class: VkUser):
 		del USERS[user_delete]
 
 
-async def global_handler(event: SimpleBotEvent):
+async def global_handler(event: SimpleBotEvent, context=False):
 	"""
 	Обработка сообщений пользователя
 	"""
@@ -34,11 +34,14 @@ async def global_handler(event: SimpleBotEvent):
 		# await eval(f"id_{user_id}.handler_msg()")
 		# globals()[f"id_{user_id}"] = VkUser(event)
 		await users_update(user_id, user_class=VkUser(event))
-		await USERS[f'id_{user_id}']['user_class'].handler_msg()
+		f = await USERS[f'id_{user_id}']['user_class'].handler_msg(context)
 
 	else:
 		msg = event.text.split('@')[0] if event.text[0] == '/' else event.text
 		text = msg.lower().translate(str.maketrans('', '', string.punctuation))
 		USERS[f'id_{user_id}']['user_class'].msg = text
-		await USERS[f'id_{user_id}']['user_class'].handler_msg()
+		f = await USERS[f'id_{user_id}']['user_class'].handler_msg(context)
 		USERS[f'id_{user_id}']['user_class'].msg_previous = text
+
+	if context:
+		return f

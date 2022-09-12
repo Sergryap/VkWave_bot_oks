@@ -9,7 +9,7 @@ import os
 import re
 import random
 # from Selenium_method.main import load_info_client
-from FSMstate import FSMQuizTraining
+from FSMstate import FSMQuizTraining, HandlerFSM
 from .verify import Verify
 from .key_button import MyKeyButton
 from vkwave.bots import SimpleBotEvent
@@ -20,6 +20,7 @@ class VkUser(
 			FSMQuizTraining,
 			Verify,
 			MyKeyButton,
+			HandlerFSM,
 ):
 	"""
 	Основной класс взаимодействия пользователя и бота
@@ -54,10 +55,16 @@ class VkUser(
 		params = {
 			"message": some_text,
 			"keyboard": None}
-
-		for key, func in self.BUTTON_FUNC.items():
+		# for key, func in self.BUTTON_FUNC.items():
+		# 	if buttons == key:
+		# 		await eval(f'self.{func}(params)')
+		# 		break
+		# 	elif buttons:
+		# 		await self.get_buttons(params)
+		button_func = await self.get_button_func()
+		for key, func in button_func.items():
 			if buttons == key:
-				await eval(f'self.{func}(params)')
+				await func(params)
 				break
 			elif buttons:
 				await self.get_buttons(params)
@@ -68,9 +75,11 @@ class VkUser(
 			await self.send_message(some_text, buttons)
 
 	#@db_insert(table='Message')
-	async def handler_msg(self):
+	async def handler_msg(self, context=False):
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
 
+		if context:
+			return await self.handler_msg_fsm(context)
 		await self.send_message_to_all_admins()
 		if await self.verify_quiz_training():
 			return
@@ -238,4 +247,5 @@ class VkUser(
 		text2 = "Либо выберите ниже:"
 
 		await self.send_message(some_text=text, buttons='training_buttons')
-		await self.send_message(some_text=text2, buttons='start')
+		await self.event.answer(message=text2)
+		# await self.send_message(some_text=text2, buttons='start')
