@@ -7,15 +7,15 @@ class FSMQuiz:
 	"""
 	Базовый класс квиза
 	"""
-
 	TEXT_OFF = ''
 	OUT_TEXT_PREFIX = ''
 
-	def __init__(self):
+	def __init__(self, func_out):
 		self.data_quiz = {}
 		self.data_quiz_list = []
 		self.fsm_quiz = False  # флаг состояния машины состояния
 		self.verify_quiz = None  # функция условия вкл/выкл машины состояния
+		setattr(self, func_out, self.handler_fsm_quiz)
 
 	def get_steps_quiz(self):
 		"""

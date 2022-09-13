@@ -3,14 +3,13 @@ from .fsm import FSMQuiz
 
 class FSMQuizTraining(FSMQuiz):
 
-	def __init__(self):
-		super().__init__()
-		# Для каждого квиза задать свое имя функции, которой присваивается значение
-		self.verify_quiz_training = self.handler_fsm_quiz
-		self.verify_quiz = self.verify_fsm_quiz_on
-
+	FUNC_OUT = 'verify_quiz_training'  # имя функции, которой присваивается значение self.handler_fsm_quiz
 	TEXT_OFF = 'Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"'
 	OUT_TEXT_PREFIX = "ЗАЯВКА НА ОБУЧЕНИЕ"
+
+	def __init__(self, func_out=FUNC_OUT):
+		super().__init__(func_out)
+		self.verify_quiz = self.verify_fsm_quiz_on
 
 	def get_steps_quiz(self):
 		return [
