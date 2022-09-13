@@ -4,18 +4,6 @@ from vkwave.bots.utils.keyboards.keyboard import ButtonColor
 
 class MyKeyButton:
 
-	# BUTTON_FUNC = {
-	# 	'send_photo': 'get_button_send_photo',
-	# 	'fsm_quiz': 'get_button_fsm_quiz',
-	# 	'training_buttons': 'get_button_training',
-	# 	'break': 'get_button_break',
-	# 	'practic_extention': 'get_practic_extention',
-	# 	'what_job': 'get_what_job',
-	# 	'entry_link': 'get_entry_link',
-	# 	'pass': 'get_button_pass',
-	# 	'start': 'get_start',
-	# }
-
 	async def get_button_func(self):
 		return {
 			'send_photo': self.get_button_send_photo,

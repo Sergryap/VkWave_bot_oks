@@ -11,7 +11,8 @@ from vkwave.bots import (
     ForWhat,
 )
 
-from handlers import global_handler as g
+from handlers import handler
+
 
 fsm = FiniteStateMachine()
 fsm_training_router = DefaultRouter()
@@ -34,7 +35,7 @@ class FSMTraining:
 )
 async def start_fsm_training(event: BotEvent):
     await fsm.set_state(event=event, state=FSMTraining.phone, for_what=ForWhat.FOR_USER)
-    params = await g.global_handler(event, context={'step': 'phone', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'phone', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("1. Укажите, пожалуйста, ваш контактный номер телефона")
 
@@ -49,7 +50,7 @@ async def exit_fsm_training(event: BotEvent):
     # Check if we have the user in database
     if await fsm.get_data(event, for_what=ForWhat.FOR_USER) is not None:
         await fsm.finish(event=event, for_what=ForWhat.FOR_USER)
-    params = await g.global_handler(event, context={'step': 'break', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'break', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("Спасибо, вы сможете продолжить в любое время")
 
@@ -61,7 +62,7 @@ async def exit_fsm_training(event: BotEvent):
 async def phone_fsm_training(event: BotEvent):
     pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
     if not bool(pattern.findall(event.object.object.message.text)):
-        params = await g.global_handler(event, context={'step': 'phone', 'status': 'off'})
+        params = await handler.global_handler(event, context={'step': 'phone', 'status': 'off'})
         return await event.answer(**params)
     await fsm.set_state(
         event=event,
@@ -69,7 +70,7 @@ async def phone_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"phone": event.object.object.message.text},
     )
-    params = await g.global_handler(event, context={'step': 'name', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'name', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("2. Введите ваше имя")
 
@@ -85,7 +86,7 @@ async def name_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"name": event.object.object.message.text},
     )
-    params = await g.global_handler(event, context={'step': 'practice', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'practice', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("3. Вы уже имеете опыт в наращивании ресниц?")
 
@@ -101,7 +102,7 @@ async def practice_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"practice": event.object.object.message.text},
     )
-    params = await g.global_handler(event, context={'step': 'work', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'work', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("4. Кем вы сейчас работаете или чем занимаетесь? Выберите ниже или напишите свой вариант.")
 
@@ -117,7 +118,7 @@ async def practice_fsm_training(event: BotEvent):
         for_what=ForWhat.FOR_USER,
         extra_state_data={"practice": event.object.object.message.text},
     )
-    params = await g.global_handler(event, context={'step': 'age', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'age', 'status': 'on'})
     return await event.answer(**params)
     # return await event.answer("5. Укажите ваш возраст, либо пропустите данный пункт.")
 
@@ -130,7 +131,7 @@ async def age_fsm_training(event: BotEvent):
     if bool(event.object.object.message.text.lower() != "пропустить"
             and not (event.object.object.message.text.isdigit()
             and 10 < int(event.object.object.message.text) < 100)):
-        params = await g.global_handler(event, context={'step': 'age', 'status': 'off'})
+        params = await handler.global_handler(event, context={'step': 'age', 'status': 'off'})
         return await event.answer(**params)
         # return f"Укажите правильное значение, либо пропустите данный пункт, или отмените!"
     await fsm.add_data(
@@ -139,7 +140,7 @@ async def age_fsm_training(event: BotEvent):
         state_data={"age": event.object.object.message.text},
     )
     user_data = await fsm.get_data(event=event, for_what=ForWhat.FOR_USER)
-    params = await g.global_handler(event, context={'step': 'finish', 'status': 'on'})
+    params = await handler.global_handler(event, context={'step': 'finish', 'status': 'on'})
     await event.answer(**params)
     await fsm.finish(event=event, for_what=ForWhat.FOR_USER)
     return f"Your data - {user_data}"

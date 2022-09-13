@@ -7,7 +7,9 @@ class FSMQuizTraining(FSMQuiz):
 		super().__init__()
 		# Для каждого квиза задать свое имя функции, которой присваивается значение
 		self.verify_quiz_training = self.handler_fsm_quiz
+		self.verify_quiz = self.verify_fsm_quiz_on
 
+	TEXT_OFF = 'Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"'
 	OUT_TEXT_PREFIX = "ЗАЯВКА НА ОБУЧЕНИЕ"
 
 	def get_steps_quiz(self):

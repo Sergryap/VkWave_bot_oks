@@ -12,16 +12,12 @@ from .photos import photos
 from password import TOKEN
 
 
-class VkSearch: #  (DBConnect):
-    """Класс методов поиска и сортировки из api-vk"""
+class VkApi: #  (DBConnect):
+    """Класс методов из api VK"""
 
     url = 'https://api.vk.com/method/'
     with open(os.path.join("vk_agent", "token.txt"), encoding='utf-8') as file:
         token = [t.strip() for t in file.readlines()]
-    # with open(os.path.join("token.txt"), encoding='utf-8') as file:
-    #     token = [t.strip() for t in file.readlines()]
-
-    token = token[1:]
 
     def __init__(self):
         super().__init__()
@@ -63,6 +59,7 @@ class VkSearch: #  (DBConnect):
         Получение данных о пользователе по его id
         :return: словарь с данными по пользователю
         """
+        print(f"Получение данных о пользователе: {self.user_id}")
         params_delta = {'user_ids': self.user_id, 'fields': 'country,city,bdate,sex'}
         response = self.get_stability('users.get', params_delta)
         if response:

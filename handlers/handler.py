@@ -28,11 +28,8 @@ async def global_handler(event: SimpleBotEvent, context=False):
 	"""
 	global USERS
 	user_id = event.user_id
+
 	if f'id_{user_id}' not in USERS:
-		# exec(f"id_{user_id} = VkUser(event)")
-		# await users_update(user_id, user_class=eval(f"id_{user_id}"))
-		# await eval(f"id_{user_id}.handler_msg()")
-		# globals()[f"id_{user_id}"] = VkUser(event)
 		await users_update(user_id, user_class=VkUser(event))
 		f = await USERS[f'id_{user_id}']['user_class'].handler_msg(context)
 
@@ -40,6 +37,7 @@ async def global_handler(event: SimpleBotEvent, context=False):
 		msg = event.text.split('@')[0] if event.text[0] == '/' else event.text
 		text = msg.lower().translate(str.maketrans('', '', string.punctuation))
 		USERS[f'id_{user_id}']['user_class'].msg = text
+		USERS[f'id_{user_id}']['user_class'].event = event
 		f = await USERS[f'id_{user_id}']['user_class'].handler_msg(context)
 		USERS[f'id_{user_id}']['user_class'].msg_previous = text
 

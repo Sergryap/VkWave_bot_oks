@@ -8,32 +8,38 @@ class FSMQuiz:
 	Базовый класс квиза
 	"""
 
-	TEXT_OFF = 'Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"'
-	OUT_TEXT_PREFIX = 'Заявка на обуение'
-	SUFFIX = 'test'
+	TEXT_OFF = ''
+	OUT_TEXT_PREFIX = ''
 
 	def __init__(self):
 		self.data_quiz = {}
 		self.data_quiz_list = []
-		self.fsm_quiz = False
-		self.verify_quiz = self.verify_fsm_quiz_on
+		self.fsm_quiz = False  # флаг состояния машины состояния
+		self.verify_quiz = None  # функция условия вкл/выкл машины состояния
 
 	def get_steps_quiz(self):
+		"""
+		Функция описания квиза
+		"""
+
 		pass
 
 	async def set_fsm_quiz(self):
 		"""
 		Включение/выключение машины состояния опроса записи на обучающий курс
 		"""
-
+		#  Проверка на включение:
 		if self.verify_quiz(on_fsm=True):
 			self.fsm_quiz = True
 			self.step_count = 1
 			self.step_text = FSMIterator(steps=self.get_steps_quiz())
 			self.iter_quiz = iter(self.step_text)
+
+		#  Проверка на выключение:
 		elif self.verify_quiz(on_fsm=False):
 			self.fsm_quiz = False
 			self.data_quiz_list = []
+			# если была отмена, то отправляем сообщенние пользователю
 			text_off = f'Спасибо, {self.user_info["first_name"]}. {self.TEXT_OFF}.'
 			await self.send_message(some_text=text_off, buttons=True)
 
@@ -84,6 +90,7 @@ class FSMQuiz:
 			await self.send_message_to_all_admins(text=text)
 
 	async def handler_fsm_quiz(self):
+		# назначаем или проверяем флаг состояния машины состояния перед каждым шагом
 		await self.set_fsm_quiz()
 		if self.fsm_quiz:
 			await self.send_msg_fsm_quiz()

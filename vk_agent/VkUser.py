@@ -3,7 +3,7 @@ import requests
 import asyncio
 import string
 
-from .VKsearch import VkSearch
+from .vk_api import VkApi
 # from Data_base.DecorDB import db_insert
 import os
 import re
@@ -16,7 +16,7 @@ from vkwave.bots import SimpleBotEvent
 
 
 class VkUser(
-			VkSearch,
+			VkApi,
 			FSMQuizTraining,
 			Verify,
 			MyKeyButton,
@@ -55,12 +55,6 @@ class VkUser(
 		params = {
 			"message": some_text,
 			"keyboard": None}
-		# for key, func in self.BUTTON_FUNC.items():
-		# 	if buttons == key:
-		# 		await eval(f'self.{func}(params)')
-		# 		break
-		# 	elif buttons:
-		# 		await self.get_buttons(params)
 		button_func = await self.get_button_func()
 		for key, func in button_func.items():
 			if buttons == key:
@@ -85,12 +79,12 @@ class VkUser(
 			return
 		if self.verify_hello():
 			await self.send_hello()
-		for verify, func in self.VERIFY_FUNC.items():
-			x = compile(f'self.{verify}()', 'test', 'eval')
-			if eval(x):
-				await eval(f'self.{func}()')
 
-	async def send_hello(self):  # ,inline=False):
+		for verify, func in self.get_verify_func().items():
+			if verify():
+				await func()
+
+	async def send_hello(self):
 
 		def good_time():
 			tm = time.ctime()

@@ -3,17 +3,18 @@ import re
 
 class Verify:
 
-	VERIFY_FUNC = {
-		'verify_address': 'send_address',
-		'verify_entry': 'send_link_entry',
-		'verify_price': 'send_price',
-		'verify_contact_admin': 'send_contact_admin',
-		'verify_thank_you': 'send_bay_bay',
-		'verify_our_site': 'send_site',
-		'verify_work_example': 'send_work_example',
-		'verify_last_service_entry': 'send_last_service_entry',
-		'verify_training': 'send_training',
-	}
+	def get_verify_func(self):
+		return {
+			self.verify_address: self.send_address,
+			self.verify_entry: self.send_link_entry,
+			self.verify_price: self.send_price,
+			self.verify_contact_admin: self.send_contact_admin,
+			self.verify_thank_you: self.send_bay_bay,
+			self.verify_our_site: self.send_site,
+			self.verify_work_example: self.send_work_example,
+			self.verify_last_service_entry: self.send_last_service_entry,
+			self.verify_training: self.send_training,
+		}
 
 	def verify_hello(self):
 		"""Проверка сообщения на приветствие"""
