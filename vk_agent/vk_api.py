@@ -54,24 +54,41 @@ class VkApi: #  (DBConnect):
         return self.get_stability(method, params_delta, i=count)
 
     # @db_insert(table="Client")
-    def get_info_users(self):
+    # def get_info_users(self):
+    #     """
+    #     Получение данных о пользователе по его id
+    #     :return: словарь с данными по пользователю
+    #     """
+    #     print(f"Получение данных о пользователе: {self.user_id}")
+    #     params_delta = {'user_ids': self.user_id, 'fields': 'country,city,bdate,sex'}
+    #     response = self.get_stability('users.get', params_delta)
+    #     if response:
+    #         birth_date = self.get_birth_date(response)
+    #         return {
+    #             'user_id': self.user_id,
+    #             'city_id': None if not response['response'][0].get('city') else response['response'][0]['city'].get('id'),
+    #             'sex': response['response'][0]['sex'],
+    #             'first_name': response['response'][0]['first_name'],
+    #             'last_name': response['response'][0]['last_name'],
+    #             'bdate': birth_date,
+    #         }
+
+    async def get_info_users(self):
         """
         Получение данных о пользователе по его id
         :return: словарь с данными по пользователю
         """
         print(f"Получение данных о пользователе: {self.user_id}")
-        params_delta = {'user_ids': self.user_id, 'fields': 'country,city,bdate,sex'}
-        response = self.get_stability('users.get', params_delta)
-        if response:
-            birth_date = self.get_birth_date(response)
-            return {
-                'user_id': self.user_id,
-                'city_id': None if not response['response'][0].get('city') else response['response'][0]['city'].get('id'),
-                'sex': response['response'][0]['sex'],
-                'first_name': response['response'][0]['first_name'],
-                'last_name': response['response'][0]['last_name'],
-                'bdate': birth_date,
-            }
+        api = self.event.api_ctx
+        user_info = (await api.users.get(user_ids=self.user_id, fields='country,city,bdate,sex')).response[0]
+        return {
+           'user_id': self.user_id,
+           'city_id': None if not user_info.city else user_info.city.id,
+           'first_name': user_info.first_name,
+           'last_name': user_info.last_name,
+           'bdate': user_info.bdate,
+       }
+
 
     @staticmethod
     def get_birth_date(res: dict):
@@ -117,7 +134,7 @@ class VkApi: #  (DBConnect):
         return all_photos
 
     @staticmethod
-    def get_photos_example():
+    async def get_photos_example():
         attachment = ''
         for photo in random.sample(photos, 5):
             attachment += f"{photo},"
@@ -134,12 +151,21 @@ class VkApi: #  (DBConnect):
             text = f"""
             Сообщение от пользователя https://vk.com/id{self.user_id} в чате https://vk.com/gim142029999 "{self.msg}"
             """
+        # params = {
+        #     "user_ids": self.user_ids,
+        #     "message": text,
+        #     "random_id": 0,
+        #     'access_token': TOKEN, 'v': '5.131'
+        # }
+        # method_url = self.url + 'messages.send'
+        # requests.get(method_url, params=params)
+
+        api = self.event.api_ctx
         params = {
             "user_ids": self.user_ids,
             "message": text,
-            "random_id": 0,
-            'access_token': TOKEN, 'v': '5.131'
+            "random_id": 0
         }
-        method_url = self.url + 'messages.send'
-        requests.get(method_url, params=params)
+        await api.messages.send(**params)
+
 

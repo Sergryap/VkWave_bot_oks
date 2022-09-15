@@ -43,9 +43,9 @@ class VkUser(
 		text = event.text.split('@')[0] if event.text[0] == '/' else event.text
 		self.msg = text.lower().translate(str.maketrans('', '', string.punctuation))
 		self.msg_previous = self.msg
-		self.user_info = self.get_info_users()
-		# self.user_ids = '7352307,448564047,9681859'  # id администраторов сообщества Vk
-		self.user_ids = '7352307'  # id администраторов сообщества Vk
+		self.user_info = False
+		# self.user_ids = [7352307, 448564047, 9681859]  # id администраторов сообщества Vk
+		self.user_ids = 7352307  # id администраторов сообщества Vk
 
 	async def send_message(self, some_text, buttons=True):
 		"""
@@ -71,7 +71,8 @@ class VkUser(
 	#@db_insert(table='Message')
 	async def handler_msg(self, context=False):
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
-
+		if not self.user_info:
+			self.user_info = await self.get_info_users()
 		if context:
 			return await self.handler_msg_fsm(context)
 		await self.send_message_to_all_admins()
@@ -230,7 +231,7 @@ class VkUser(
 		await self.send_message(some_text=text, buttons='send_photo')
 
 	async def send_photo(self, photo_id=None):
-		attachment = photo_id if photo_id else self.get_photos_example()
+		attachment = photo_id if photo_id else await self.get_photos_example()
 		await self.event.answer(attachment=attachment)
 
 	async def send_training(self):
@@ -238,8 +239,5 @@ class VkUser(
 			f"{self.user_info['first_name']}, получить подробную информацию о предстоящих курсах" \
 			f" и/или записаться вы можете, заполнив анкету предварительной записи," \
 			f" которая вас ни к чему не обязывает."
-		text2 = "Либо выберите ниже:"
 
 		await self.send_message(some_text=text, buttons='training_buttons')
-		await self.event.answer(message=text2)
-		# await self.send_message(some_text=text2, buttons='start')
