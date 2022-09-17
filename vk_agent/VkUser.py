@@ -46,7 +46,7 @@ class VkUser(
 		self.user_info = False
 		self.fsm_training = False
 		self.fsm_discount = False
-		FSMQuiz.__init__(self)
+		# FSMQuiz.__init__(self)
 		# self.user_ids = [7352307, 448564047, 9681859]  # id администраторов сообщества Vk
 		self.user_ids = 7352307  # id администраторов сообщества Vk
 

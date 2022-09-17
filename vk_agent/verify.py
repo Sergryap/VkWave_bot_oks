@@ -88,7 +88,7 @@ class Verify:
 		return bool(pattern.findall(self.msg))
 
 	def verify_discount(self, previous=False):
-		pattern = re.compile(r'\b(?:получить скидку|хочу скидку|скидка при первом посещении)\w*')
+		pattern = re.compile(r'\b(?:получить скидку|хочу скидку|скидка при первом посещении|скидка новичкам)\w*')
 		if previous:
 			return bool(pattern.findall(self.msg_previous) or self.msg_previous == 'discount')
 		return bool(pattern.findall(self.msg) or self.msg == 'discount')

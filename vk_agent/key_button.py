@@ -115,17 +115,22 @@ class MyKeyButton:
 	async def get_start(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
 		buttons = [
-			'Записатьcя - "z"',
-			'Price - "p"',
-			'Наш адрес - "h"',
-			'Наши работы - "ex"',
-			'Администрация - "ad"',
-			'Наши курсы - "ed"',
+			'Записатьcя',
+			'Price',
+			'Наш адрес',
+			'Наши работы',
+			'Администрация',
+			'Наши курсы',
+			'Скидка новичкам'
 		]
 		btn_color = ButtonColor.SECONDARY
+		btn_finish = ButtonColor.PRIMARY
 		for i, btn in enumerate(buttons, start=1):
-			keyboard.add_text_button(btn, btn_color)
 			if i != len(buttons):
+				keyboard.add_text_button(btn, btn_color)
+			else:
+				keyboard.add_text_button(btn, btn_finish)
+			if i != len(buttons) and i % 2 == 0:
 				keyboard.add_row()
 		params['keyboard'] = keyboard.get_keyboard()
 
