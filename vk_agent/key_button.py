@@ -8,6 +8,7 @@ class MyKeyButton:
 		return {
 			'send_photo': self.get_button_send_photo,
 			'fsm_quiz': self.get_button_fsm_quiz,
+			'fsm_quiz_inline': self.get_button_fsm_quiz_inline,
 			'training_buttons': self.get_button_training,
 			'break': self.get_button_break,
 			'practic_extention': self.get_practic_extention,
@@ -15,6 +16,7 @@ class MyKeyButton:
 			'entry_link': self.get_entry_link,
 			'pass': self.get_button_pass,
 			'start': self.get_start,
+			'search': self.get_search_our,
 		}
 
 	@staticmethod
@@ -52,6 +54,15 @@ class MyKeyButton:
 		params['keyboard'] = keyboard.get_keyboard()
 
 	@staticmethod
+	async def get_button_fsm_quiz_inline(params: dict):
+		keyboard = Keyboard(one_time=False, inline=True)
+		buttons = ['Пропустить']
+		btn_color = ButtonColor.PRIMARY
+		for btn in buttons:
+			keyboard.add_text_button(btn, btn_color)
+		params['keyboard'] = keyboard.get_keyboard()
+
+	@staticmethod
 	async def get_button_training(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
 		buttons_color = ButtonColor.PRIMARY
@@ -61,7 +72,7 @@ class MyKeyButton:
 	@staticmethod
 	async def get_button_break(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
-		buttons = ['Отменить', 'Пропустить']
+		buttons = ['Отменить']
 		btn_color = ButtonColor.PRIMARY
 		for btn in buttons:
 			keyboard.add_text_button(btn, btn_color)
@@ -122,5 +133,23 @@ class MyKeyButton:
 	async def get_entry_link(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
 		keyboard.add_link_button(text='Запишись ONLINE', link='https://vk.com/app5688600_-142029999/')
+		params['keyboard'] = keyboard.get_keyboard()
+
+	@staticmethod
+	async def get_search_our(params: dict):
+		keyboard = Keyboard(one_time=False, inline=True)
+		buttons = [
+			'По рекомендации',
+			'Через Google',
+			'Через Yandex',
+			'Нашла в 2Gis',
+			'Нашла в ВК',
+			'Нашла в Instagram'
+		]
+		btn_color = ButtonColor.SECONDARY
+		for i, btn in enumerate(buttons, start=1):
+			keyboard.add_text_button(btn, btn_color)
+			if i != len(buttons):
+				keyboard.add_row()
 		params['keyboard'] = keyboard.get_keyboard()
 

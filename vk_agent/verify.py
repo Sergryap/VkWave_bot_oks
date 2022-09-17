@@ -14,6 +14,7 @@ class Verify:
 			self.verify_work_example: self.send_work_example,
 			self.verify_last_service_entry: self.send_last_service_entry,
 			self.verify_training: self.send_training,
+			self.verify_discount: self.send_discount,
 		}
 
 	def verify_hello(self):
@@ -68,8 +69,10 @@ class Verify:
 	def verify_our_site(self):
 		return bool(self.msg == 'наш сайт' or self.msg == 'site')
 
-	def verify_training(self):
+	def verify_training(self, previous=False):
 		pattern = re.compile(r'\b(?:обучен|обучить?ся|выучить?ся|научить?ся|курс)\w*')
+		if previous:
+			return bool(pattern.findall(self.msg_previous) or self.msg_previous == 'ed')
 		return bool(pattern.findall(self.msg) or self.msg == 'ed')
 
 	def verify_fsm_quiz_on(self, on_fsm=True):
@@ -83,3 +86,10 @@ class Verify:
 	def verify_phone(self):
 		pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
 		return bool(pattern.findall(self.msg))
+
+	def verify_discount(self, previous=False):
+		pattern = re.compile(r'\b(?:получить скидку|хочу скидку|скидка при первом посещении)\w*')
+		if previous:
+			return bool(pattern.findall(self.msg_previous) or self.msg_previous == 'discount')
+		return bool(pattern.findall(self.msg) or self.msg == 'discount')
+

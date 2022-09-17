@@ -20,7 +20,7 @@ class VkApi: #  (DBConnect):
         token = [t.strip() for t in file.readlines()]
 
     def __init__(self):
-        super().__init__()
+        # super().__init__()
         self.params = {'access_token': self.token[0], 'v': '5.131'}
         self.author = 0
 

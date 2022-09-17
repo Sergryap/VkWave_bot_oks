@@ -9,7 +9,7 @@ import os
 import re
 import random
 # from Selenium_method.main import load_info_client
-from FSMstate import FSMQuizTraining, HandlerFSM
+from FSMstate import FSMQuiz, HandlerFSM
 from .verify import Verify
 from .key_button import MyKeyButton
 from vkwave.bots import SimpleBotEvent
@@ -17,7 +17,7 @@ from vkwave.bots import SimpleBotEvent
 
 class VkUser(
 			VkApi,
-			FSMQuizTraining,
+			FSMQuiz,
 			Verify,
 			MyKeyButton,
 			HandlerFSM,
@@ -42,8 +42,11 @@ class VkUser(
 		self.user_id = event.user_id
 		text = event.text.split('@')[0] if event.text[0] == '/' else event.text
 		self.msg = text.lower().translate(str.maketrans('', '', string.punctuation))
-		self.msg_previous = self.msg
+		self.msg_previous = self.__dict__.get('msg_previous', self.msg)
 		self.user_info = False
+		self.fsm_training = False
+		self.fsm_discount = False
+		FSMQuiz.__init__(self)
 		# self.user_ids = [7352307, 448564047, 9681859]  # id администраторов сообщества Vk
 		self.user_ids = 7352307  # id администраторов сообщества Vk
 
@@ -76,8 +79,25 @@ class VkUser(
 		if context:
 			return await self.handler_msg_fsm(context)
 		await self.send_message_to_all_admins()
-		if await self.verify_quiz_training():
-			return
+
+		if self.verify_training(previous=True) or self.fsm_training:
+			if await self.handler_fsm_quiz(
+				flag_fsm='fsm_training',
+				text_off='Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"',
+				out_text_prefix="ЗАЯВКА НА ОБУЧЕНИЕ",
+				steps_quiz=self.get_steps_quiz_training,
+			):
+				return
+
+		elif self.verify_discount(previous=True) or self.fsm_discount:
+			if await self.handler_fsm_quiz(
+				flag_fsm='fsm_discount',
+				text_off='Вы можете продолжить в любое время. Просто отправьте "получить скидку"',
+				out_text_prefix="СКИДКА НА ПЕРВОЕ ПОСЕЩЕНИЕ",
+				steps_quiz=self.get_steps_quiz_discount
+			):
+				return
+
 		if self.verify_hello():
 			await self.send_hello()
 
@@ -239,5 +259,13 @@ class VkUser(
 			f"{self.user_info['first_name']}, получить подробную информацию о предстоящих курсах" \
 			f" и/или записаться вы можете, заполнив анкету предварительной записи," \
 			f" которая вас ни к чему не обязывает."
+
+		await self.send_message(some_text=text, buttons='training_buttons')
+
+	async def send_discount(self):
+		text =\
+			f"{self.user_info['first_name']}, заполните анкету и получите скидку на первое посещение 15%.\n" \
+			f"Скидка доступна только для первой записи в нашу студию.\n" \
+			f"Будем рады вас видеть!"
 
 		await self.send_message(some_text=text, buttons='training_buttons')
