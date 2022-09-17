@@ -17,13 +17,14 @@ class MyKeyButton:
 			'pass': self.get_button_pass,
 			'start': self.get_start,
 			'search': self.get_search_our,
+			'menu': self.menu,
 		}
 
 	@staticmethod
 	async def get_buttons(params: dict):
 
 		keyboard = Keyboard(one_time=False, inline=False)
-		buttons = ['Записаться', 'Start', 'Обучение', 'Примеры работ']
+		buttons = ['Записаться', '☰ Menu', 'Обучение', 'Примеры работ']
 		buttons_color = [
 			ButtonColor.PRIMARY,
 			ButtonColor.PRIMARY,
@@ -40,8 +41,10 @@ class MyKeyButton:
 	@staticmethod
 	async def get_button_send_photo(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
-		buttons_color = ButtonColor.PRIMARY
-		keyboard.add_text_button('Смoтреть еще', buttons_color)
+		buttons = ['Смoтреть еще', '☰ MENU']
+		btn_color = ButtonColor.PRIMARY
+		for btn in buttons:
+			keyboard.add_text_button(btn, btn_color)
 		params['keyboard'] = keyboard.get_keyboard()
 
 	@staticmethod
@@ -65,8 +68,9 @@ class MyKeyButton:
 	@staticmethod
 	async def get_button_training(params: dict):
 		keyboard = Keyboard(one_time=False, inline=True)
-		buttons_color = ButtonColor.PRIMARY
-		keyboard.add_text_button('Заполнить анкету', buttons_color)
+		keyboard.add_text_button('Заполнить анкету', ButtonColor.PRIMARY)
+		keyboard.add_row()
+		keyboard.add_text_button('☰ MENU', ButtonColor.SECONDARY)
 		params['keyboard'] = keyboard.get_keyboard()
 
 	@staticmethod
@@ -119,7 +123,7 @@ class MyKeyButton:
 			'Price',
 			'Наш адрес',
 			'Наши работы',
-			'Администрация',
+			'Админ.',
 			'Наши курсы',
 			'Скидка новичкам'
 		]
@@ -156,5 +160,12 @@ class MyKeyButton:
 			keyboard.add_text_button(btn, btn_color)
 			if i != len(buttons):
 				keyboard.add_row()
+		params['keyboard'] = keyboard.get_keyboard()
+
+	@staticmethod
+	async def menu(params: dict):
+		keyboard = Keyboard(one_time=False, inline=True)
+		buttons_color = ButtonColor.PRIMARY
+		keyboard.add_text_button('☰ MENU', buttons_color)
 		params['keyboard'] = keyboard.get_keyboard()
 

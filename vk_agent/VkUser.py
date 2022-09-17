@@ -154,7 +154,7 @@ class VkUser(
 		"""
 		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text1, buttons='entry_link')
-		await self.send_message(some_text=text2, buttons='start')
+		await self.send_message(some_text=text2, buttons='menu')
 
 	async def send_last_service_entry(self):
 		if self.msg == "r":
@@ -209,7 +209,7 @@ class VkUser(
 		"""
 		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text)
-		await self.send_message(some_text=text2, buttons='start')
+		await self.send_message(some_text=text2, buttons='menu')
 
 	async def send_site(self):
 		text = f"""
@@ -218,7 +218,7 @@ class VkUser(
 		"""
 		text2 = "Что вас еще интересует напишите или выберите ниже:"
 		await self.send_message(some_text=text)
-		await self.send_message(some_text=text2, buttons='start')
+		await self.send_message(some_text=text2, buttons='menu')
 
 	async def send_address(self):
 		text1 = f"""
@@ -232,14 +232,14 @@ class VkUser(
 		"""
 		await self.send_message(some_text=text1)
 		await self.send_photo('photo-195118308_457239030,photo-142029999_457243624')
-		await self.send_message(some_text=text2, buttons='start')
+		await self.send_message(some_text=text2, buttons='menu')
 
 	async def send_bay_bay(self):
 		text1 = f"До свидания, {self.user_info['first_name']}. Будем рады видеть вас снова!"
 		text2 = f"До скорых встреч, {self.user_info['first_name']}. Было приятно с Вами пообщаться. Ждём вас снова!"
 		text3 = f"Всего доброго Вам, {self.user_info['first_name']}. Надеюсь мы ответили на Ваши вопросы. Ждём вас снова! До скорых встреч."
 		text = random.choice([text1, text2, text3])
-		await self.send_message(some_text=text)
+		await self.send_message(some_text=text, buttons='menu')
 
 	async def send_work_example(self):
 		text = f"""
@@ -269,3 +269,7 @@ class VkUser(
 			f"Будем рады вас видеть!"
 
 		await self.send_message(some_text=text, buttons='training_buttons')
+
+	async def send_menu(self):
+		text = "Выберите ниже:"
+		await self.send_message(some_text=text, buttons='start')

@@ -15,11 +15,17 @@ class Verify:
 			self.verify_last_service_entry: self.send_last_service_entry,
 			self.verify_training: self.send_training,
 			self.verify_discount: self.send_discount,
+			self.verify_menu: self.send_menu,
 		}
 
 	def verify_hello(self):
 		"""Проверка сообщения на приветствие"""
 		pattern = re.compile(r'\b(?:приве?т|здрав?ств?уй|добрый|доброго\s*времени|рад[а?]\s*видеть|start)\w*')
+		return bool(pattern.findall(self.msg))
+
+	def verify_menu(self):
+		"""Проверка сообщения на приветствие"""
+		pattern = re.compile(r'\b(?:меню|menu)\w*')
 		return bool(pattern.findall(self.msg))
 
 	def verify_only_hello(self):

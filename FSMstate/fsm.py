@@ -157,7 +157,7 @@ class FSMQuiz:
 			data_quiz = [i[-2] if len(i) < 6 else i[-3] for i in steps_quiz()[:-1]]
 			self.data_quiz = dict(zip(data_quiz, self.data_quiz_list[1:]))
 			self.data_quiz_list.clear()
-			text = f'{out_text_prefix}:\n'
+			text = f'{out_text_prefix}:\nuser: vk.com/id{self.user_id}\n'
 			for key, value in self.data_quiz.items():
 				text += f'{key}: {value}\n'
 			await self.send_message_to_all_admins(text=text)
