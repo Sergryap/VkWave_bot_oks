@@ -98,4 +98,3 @@ class Verify:
 		if previous:
 			return bool(pattern.findall(self.msg_previous) or self.msg_previous == 'discount')
 		return bool(pattern.findall(self.msg) or self.msg == 'discount')
-

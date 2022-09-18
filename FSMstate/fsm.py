@@ -6,7 +6,7 @@ from .fsm_iterator import FSMIterator
 
 class FSMQuiz:
 	"""
-	Базовый класс квиза
+	Класс машины состояния
 	"""
 
 
@@ -17,6 +17,9 @@ class FSMQuiz:
 		self.verify_quiz = self.verify_fsm_quiz_on  # функция условия вкл/выкл машины состояния
 
 	def get_steps_quiz_training(self):
+		"""
+		Пункты анкеты на запись на курс
+		"""
 		return [
 			(
 				f"1. {self.user_info['first_name']}, оставьте пожалуйста ваш контактный номер телефона:",
@@ -58,6 +61,9 @@ class FSMQuiz:
 		]
 
 	def get_steps_quiz_discount(self):
+		"""
+		Пункты анкеты на запись со скидкой
+		"""
 		return [
 			(
 				f"1. {self.user_info['first_name']}, оставьте пожалуйста ваш контактный номер телефона:",
@@ -162,9 +168,37 @@ class FSMQuiz:
 				text += f'{key}: {value}\n'
 			await self.send_message_to_all_admins(text=text)
 
-	async def handler_fsm_quiz(self, flag_fsm, text_off, out_text_prefix, steps_quiz):
-		# назначаем или проверяем флаг состояния машины состояния перед каждым шагом
-		await self.set_fsm_quiz(flag_fsm, text_off, steps_quiz)
-		if self.fsm_quiz:
-			await self.send_msg_fsm_quiz(flag_fsm, out_text_prefix, steps_quiz)
+	async def handler_fsm_quiz(
+			self,
+			verify_func,
+			steps_quiz,
+			flag_fsm: str,
+			text_off: str,
+			out_text_prefix: str,
+	) -> bool:
+		# проверяем находимся ли в режиме машины состояния:
+		if verify_func(previous=True) or getattr(self, flag_fsm):
+			# назначаем и/или проверяем флаг состояния машины состояния перед каждым шагом
+			await self.set_fsm_quiz(flag_fsm, text_off, steps_quiz)
+			if self.fsm_quiz:
+				await self.send_msg_fsm_quiz(flag_fsm, out_text_prefix, steps_quiz)
+				return True
+
+	async def fsm_state(self):
+		if await self.handler_fsm_quiz(
+			verify_func=self.verify_training,
+			steps_quiz=self.get_steps_quiz_training,
+			flag_fsm='fsm_training',
+			text_off='Вы можете продолжить в любое время. Просто отправьте "обучение" или "ed"',
+			out_text_prefix="ЗАЯВКА НА ОБУЧЕНИЕ",
+		):
+			return True
+
+		if await self.handler_fsm_quiz(
+			verify_func=self.verify_discount,
+			steps_quiz=self.get_steps_quiz_discount,
+			flag_fsm='fsm_discount',
+			text_off='Вы можете продолжить в любое время. Просто отправьте "получить скидку"',
+			out_text_prefix="СКИДКА НА ПЕРВОЕ ПОСЕЩЕНИЕ",
+		):
 			return True

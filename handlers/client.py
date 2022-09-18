@@ -1,7 +1,3 @@
-import json
-import string
-import time
-
 from vkwave.bots import simple_bot_message_handler, SimpleBotEvent, DefaultRouter
 from .handler import global_handler
 from filters import MatFilter

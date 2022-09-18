@@ -1,13 +1,10 @@
 import requests
 import json
 import os
-import datetime as dt
-import time
 import random
 
 # from Data_base.DecorDB import db_insert
 # from Data_base.DecorDB import DBConnect
-from pprint import pprint
 from .photos import photos
 from password import TOKEN
 
@@ -88,7 +85,6 @@ class VkApi: #  (DBConnect):
            'last_name': user_info.last_name,
            'bdate': user_info.bdate,
        }
-
 
     @staticmethod
     def get_birth_date(res: dict):
