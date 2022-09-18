@@ -52,6 +52,7 @@ class VkUser(
 		"""Функция-обработчик событий сервера типа MESSAGE_NEW"""
 		if not self.user_info:
 			self.user_info = await self.get_info_users()
+
 		if context:
 			return await self.handler_msg_fsm(context)
 		await self.send_message_to_all_admins()

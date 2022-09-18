@@ -170,9 +170,9 @@ class FSMQuiz:
 
 	async def handler_fsm_quiz(
 			self,
-			verify_func,
-			steps_quiz,
-			flag_fsm: str,
+			verify_func,  # функция проверки сообщения на режим машины состояния
+			steps_quiz,  # функция генерации пунктов режима машины состояния
+			flag_fsm: str,  # флаг вкл/выкл режима машины состояния
 			text_off: str,
 			out_text_prefix: str,
 	) -> bool:
@@ -185,6 +185,9 @@ class FSMQuiz:
 				return True
 
 	async def fsm_state(self):
+		"""
+		Для каждого режима машины состояния добавить свою функцию
+		"""
 		if await self.handler_fsm_quiz(
 			verify_func=self.verify_training,
 			steps_quiz=self.get_steps_quiz_training,
