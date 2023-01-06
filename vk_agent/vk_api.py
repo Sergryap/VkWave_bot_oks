@@ -6,14 +6,13 @@ import random
 # from Data_base.DecorDB import db_insert
 # from Data_base.DecorDB import DBConnect
 from .photos import photos
-from password import TOKEN
 
 
 class VkApi: #  (DBConnect):
     """Класс методов из api VK"""
 
     url = 'https://api.vk.com/method/'
-    with open(os.path.join("vk_agent", "token.txt"), encoding='utf-8') as file:
+    with open(os.path.join("vk_agent", ".token"), encoding='utf-8') as file:
         token = [t.strip() for t in file.readlines()]
 
     def __init__(self):
@@ -33,7 +32,7 @@ class VkApi: #  (DBConnect):
         При неудачном запросе делается рекурсивный вызов
         с другим токеном и установкой этого токена по умолчанию
         через функцию __set_params
-        Для работы функции необходим текстовый файл token.txt с построчно записанными токенами
+        Для работы функции необходим текстовый файл .token с построчно записанными токенами
         В первую строку заносится токен от чат-бота.
         """
         print(f'Глубина рекурсии: {i}/токен: {self.author}')

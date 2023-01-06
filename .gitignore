@@ -8,5 +8,7 @@ bot_run.bat
 words.txt
 cenz.txt
 password.py
-vk_agent/token.txt
+vk_agent/.token
 meta.py
+.token
+/vk_agent/.token
